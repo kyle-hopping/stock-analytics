@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.20)
 project(StockAnalytics VERSION 1.0.0 LANGUAGES CXX)
 
-# ─── C++ Standard ────────────────────────────────────────────────────────────
+# --- C++ Standard -------------------------------------------------------------
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# ─── Build type default ───────────────────────────────────────────────────────
+# --- Build type default -------------------------------------------------------
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
@@ -16,7 +16,7 @@ set(VCPKG_TARGET_TRIPLET "x64-windows" CACHE STRING "vcpkg triplet")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Compiler:   ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
-# ─── Force correct vcpkg toolchain ───────────────────────────────────────────
+# --- Force correct vcpkg toolchain --------------------------------------------
 # Prevents CMake from picking up the vcpkg bundled with Visual Studio Build Tools.
 # Priority: VCPKG_ROOT env var → C:/vcpkg fallback
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -37,12 +37,12 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   message(STATUS "vcpkg toolchain: ${CMAKE_TOOLCHAIN_FILE}")
 endif()
 
-# ─── Output directories ───────────────────────────────────────────────────────
+# --- Output directories -------------------------------------------------------
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-# ─── Find dependencies ────────────────────────────────────────────────────────
+# --- Find dependencies --------------------------------------------------------
 find_package(Threads REQUIRED)
 
 # librdkafka — vcpkg: vcpkg install librdkafka:x64-windows
@@ -67,7 +67,7 @@ find_package(Boost 1.80 REQUIRED COMPONENTS system)
 find_package(InfluxDB CONFIG REQUIRED)
 # Note: target is InfluxData::InfluxDB not InfluxDB::InfluxDB
 
-# ─── Compiler flags ───────────────────────────────────────────────────────────
+# --- Compiler flags -----------------------------------------------------------
 if(MSVC)
   add_compile_options(
     /W4
@@ -84,7 +84,7 @@ else()
   )
 endif()
 
-# ─── Source files ─────────────────────────────────────────────────────────────
+# --- Source files -------------------------------------------------------------
 set(INGESTION_SOURCES
   src/ingestion/kafka_producer.cpp
   src/ingestion/kafka_consumer.cpp
@@ -111,7 +111,7 @@ set(DASHBOARD_SOURCES
   src/dashboard/query_handler.cpp
 )
 
-# ─── Main executable ──────────────────────────────────────────────────────────
+# --- Main executable ----------------------------------------------------------
 add_executable(stock_analytics
   src/main.cpp
   ${INGESTION_SOURCES}
@@ -120,7 +120,7 @@ add_executable(stock_analytics
   ${DASHBOARD_SOURCES}
 )
 
-# ─── Include paths ────────────────────────────────────────────────────────────
+# --- Include paths ------------------------------------------------------------
 target_include_directories(stock_analytics PRIVATE
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/include
@@ -128,7 +128,7 @@ target_include_directories(stock_analytics PRIVATE
   ${Boost_INCLUDE_DIRS}
 )
 
-# ─── Link libraries ───────────────────────────────────────────────────────────
+# --- Link libraries -----------------------------------------------------------
 target_link_libraries(stock_analytics PRIVATE
   Threads::Threads
   RdKafka::rdkafka++
@@ -139,7 +139,7 @@ target_link_libraries(stock_analytics PRIVATE
   InfluxData::InfluxDB
 )
 
-# ─── Tests ────────────────────────────────────────────────────────────────────
+# --- Tests --------------------------------------------------------------------
 option(BUILD_TESTS "Build unit tests" ON)
 
 if(BUILD_TESTS)
@@ -177,11 +177,11 @@ if(BUILD_TESTS)
   gtest_discover_tests(stock_analytics_tests)
 endif()
 
-# ─── Summary ──────────────────────────────────────────────────────────────────
-message(STATUS "──────────────────────────────────────────")
+# --- Summary ------------------------------------------------------------------
+message(STATUS "------------------------------------------")
 message(STATUS " Stock Analytics build configuration")
 message(STATUS "  C++ standard : ${CMAKE_CXX_STANDARD}")
 message(STATUS "  Build type   : ${CMAKE_BUILD_TYPE}")
 message(STATUS "  Tests        : ${BUILD_TESTS}")
 message(STATUS "  Output dir   : ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-message(STATUS "──────────────────────────────────────────")
+message(STATUS "------------------------------------------")
