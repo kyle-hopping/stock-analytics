@@ -1,0 +1,13 @@
+{
+  "name": "stock-analytics",
+  "version": "1.0.0",
+  "dependencies": [
+    "librdkafka",
+    "nlohmann-json",
+    "spdlog",
+    "curl",
+    "boost-asio",
+    "gtest",
+    "influxdb-cxx"
+  ]
+}
