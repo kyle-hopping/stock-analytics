@@ -16,25 +16,36 @@ set(VCPKG_TARGET_TRIPLET "x64-windows" CACHE STRING "vcpkg triplet")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Compiler:   ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
+# ─── Force correct vcpkg toolchain ───────────────────────────────────────────
+# Prevents CMake from picking up the vcpkg bundled with Visual Studio Build Tools.
+# Priority: VCPKG_ROOT env var → C:/vcpkg fallback
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+  if(DEFINED ENV{VCPKG_ROOT})
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        CACHE STRING "vcpkg toolchain")
+  elseif(EXISTS "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+    set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
+        CACHE STRING "vcpkg toolchain")
+  else()
+    message(FATAL_ERROR
+      "vcpkg not found. Either:\n"
+      "  1. Set the VCPKG_ROOT environment variable to your vcpkg root\n"
+      "  2. Install vcpkg to C:/vcpkg\n"
+      "  See README.md for setup instructions."
+    )
+  endif()
+  message(STATUS "vcpkg toolchain: ${CMAKE_TOOLCHAIN_FILE}")
+endif()
+
 # ─── Output directories ───────────────────────────────────────────────────────
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-# ─── vcpkg toolchain (set before find_package calls) ─────────────────────────
-# If you installed vcpkg, point this to your vcpkg root.
-# You can also pass it on the command line:
-#   cmake -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake ..
-if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-  set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-      CACHE STRING "vcpkg toolchain")
-  message(STATUS "vcpkg toolchain: ${CMAKE_TOOLCHAIN_FILE}")
-endif()
-
 # ─── Find dependencies ────────────────────────────────────────────────────────
 find_package(Threads REQUIRED)
 
-# RdKafka (librdkafka C++ client)
+# librdkafka — vcpkg: vcpkg install librdkafka:x64-windows
 find_package(RdKafka CONFIG REQUIRED)
 
 # nlohmann JSON (header-only)
@@ -58,15 +69,13 @@ find_package(InfluxDB CONFIG REQUIRED)
 
 # ─── Compiler flags ───────────────────────────────────────────────────────────
 if(MSVC)
-  # Windows / Visual Studio
   add_compile_options(
-    /W4           # High warning level
-    /WX-          # Warnings not errors (relax during early dev)
-    /MP           # Parallel compilation
-    /permissive-  # Strict standards conformance
+    /W4
+    /WX-
+    /MP
+    /permissive-
   )
 else()
-  # GCC / Clang
   add_compile_options(
     -Wall
     -Wextra
@@ -114,7 +123,7 @@ add_executable(stock_analytics
 # ─── Include paths ────────────────────────────────────────────────────────────
 target_include_directories(stock_analytics PRIVATE
   ${CMAKE_SOURCE_DIR}/src
-  ${CMAKE_SOURCE_DIR}/include        # vendored headers (uWebSockets etc.)
+  ${CMAKE_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/config
   ${Boost_INCLUDE_DIRS}
 )
