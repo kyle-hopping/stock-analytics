@@ -54,6 +54,7 @@ find_package(Boost 1.80 REQUIRED COMPONENTS system)
 
 # influxdb-cxx — vcpkg: vcpkg install influxdb-cxx:x64-windows
 find_package(InfluxDB CONFIG REQUIRED)
+# Note: target is InfluxData::InfluxDB not InfluxDB::InfluxDB
 
 # ─── Compiler flags ───────────────────────────────────────────────────────────
 if(MSVC)
@@ -126,7 +127,7 @@ target_link_libraries(stock_analytics PRIVATE
   spdlog::spdlog
   CURL::libcurl
   Boost::system
-  InfluxDB::InfluxDB
+  InfluxData::InfluxDB
 )
 
 # ─── Tests ────────────────────────────────────────────────────────────────────
@@ -160,7 +161,7 @@ if(BUILD_TESTS)
     spdlog::spdlog
     CURL::libcurl
     Boost::system
-    InfluxDB::InfluxDB
+    InfluxData::InfluxDB
   )
 
   include(GoogleTest)
