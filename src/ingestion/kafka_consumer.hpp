@@ -49,7 +49,7 @@ public:
     bool is_running() const { return running_.load(); }
 
 private:
-    // Processes a single message received from Kafka. Deserialises the JSON
+    // Processes a single message received from Kafka. Deserializes the JSON
     // payload and invokes the registered callback.
     void handle_message(RdKafka::Message& message);
 

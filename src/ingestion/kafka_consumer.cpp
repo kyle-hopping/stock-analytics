@@ -67,7 +67,7 @@ KafkaConsumer::~KafkaConsumer() {
 
 void KafkaConsumer::subscribe(const std::vector<std::string>& topics) {
     if (!consumer_) {
-        throw std::runtime_error("KafkaConsumer: cannot subscribe — consumer not initialised");
+        throw std::runtime_error("KafkaConsumer: cannot subscribe — consumer not initialized");
     }
 
     RdKafka::ErrorCode err = consumer_->subscribe(topics);
@@ -89,7 +89,7 @@ void KafkaConsumer::start() {
     }
 
     if (!consumer_) {
-        throw std::runtime_error("KafkaConsumer: cannot start — consumer not initialised");
+        throw std::runtime_error("KafkaConsumer: cannot start — consumer not initialized");
     }
 
     running_.store(true);
