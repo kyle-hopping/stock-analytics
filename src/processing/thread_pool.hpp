@@ -37,7 +37,7 @@ public:
     }
 
     // Returns the num of tasks currently waiting in the queue.
-    size_t queue_size() const;
+    size_t queue_size();
 
     bool is_stopped() const {
         return stopped_.load();

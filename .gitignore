@@ -73,3 +73,6 @@ Testing/
 
 # machine specified override
 CMakeUserPresets.json
+
+lib/
+include/

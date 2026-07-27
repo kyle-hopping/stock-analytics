@@ -73,7 +73,7 @@ void ThreadPool::worker_loop() {
     }
 }
 
-size_t ThreadPool::queue_size() const {
+size_t ThreadPool::queue_size() {
     std::unique_lock<std::mutex> lock(queue_mutex_);
     return tasks_.size();
 }

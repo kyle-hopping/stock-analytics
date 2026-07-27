@@ -210,7 +210,7 @@ int main() {
 
         // Thread A — Stock fetcher polling loop
         // Polls Alpha Vantage and Massive on a 60-second interval
-        std::thread fetcher_thread([&stock_fetcher, &g_shutdown]() {
+        std::thread fetcher_thread([&stock_fetcher]() {
             spdlog::info("fetcher_thread: starting poll loop");
             stock_fetcher->start_polling(std::chrono::seconds(60));
             spdlog::info("fetcher_thread: stopped");

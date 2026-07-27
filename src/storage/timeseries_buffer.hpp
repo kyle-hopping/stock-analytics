@@ -34,10 +34,10 @@ public:
     size_t drain(std::vector<nlohmann::json>& output, size_t max_items = 500);
 
     // Returns true if the buffer currently has no items.
-    bool empty() const;
+    bool empty();
 
     // Returns the number of items currently in the buffer.
-    size_t size() const;
+    size_t size();
 
     // Returns the maximum number of items the buffer can hold.
     size_t capacity() const { return capacity_; }

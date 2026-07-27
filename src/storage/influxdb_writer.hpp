@@ -1,5 +1,7 @@
 #pragma once
-#include <InfluxDBFactory.h>
+#include <InfluxDB/InfluxDBFactory.h>
+#include <InfluxDB/InfluxDB.h>
+#include <InfluxDB/Point.h>
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 #include <atomic>

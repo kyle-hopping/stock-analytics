@@ -1,5 +1,5 @@
 #include "influxdb_writer.hpp"
-#include <InfluxDBFactory.h>
+#include <InfluxDB/InfluxDBFactory.h>
 #include <stdexcept>
 #include <chrono>
 

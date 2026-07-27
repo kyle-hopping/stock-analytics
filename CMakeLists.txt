@@ -58,12 +58,12 @@ find_package(CURL REQUIRED)
 # Boost (Asio for async I/O)
 find_package(Boost 1.80 REQUIRED COMPONENTS system)
 
-# uWebSockets — header-only, included via include/
-# (no find_package needed — we add include/ to include path below)
+# uWebSockets — vcpkg: vcpkg install uwebsockets
+find_package(unofficial-uwebsockets CONFIG REQUIRED)
 
-# influxdb-cxx — vcpkg: vcpkg install influxdb-cxx:x64-windows
-find_package(InfluxDB CONFIG REQUIRED)
+# influxdb-cxx — vcpkg: vcpkg install influxdb-cxx
 # Note: target is InfluxData::InfluxDB not InfluxDB::InfluxDB
+find_package(InfluxDB CONFIG REQUIRED)
 
 # --- Compiler flags -----------------------------------------------------------
 if(MSVC)
@@ -79,6 +79,7 @@ else()
     -Wextra
     -Wpedantic
     -O2
+    -Wno-unused-parameter
   )
 endif()
 
@@ -135,6 +136,7 @@ target_link_libraries(stock_analytics PRIVATE
   CURL::libcurl
   Boost::system
   InfluxData::InfluxDB
+  unofficial::uwebsockets::uwebsockets
 )
 
 # --- Tests --------------------------------------------------------------------
@@ -169,6 +171,7 @@ if(BUILD_TESTS)
     CURL::libcurl
     Boost::system
     InfluxData::InfluxDB
+    unofficial::uwebsockets::uwebsockets
   )
 
   include(GoogleTest)

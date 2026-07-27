@@ -2,7 +2,8 @@
 #include "../storage/influxdb_writer.hpp"
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
-#include <InfluxDBFactory.h>
+#include <InfluxDB/InfluxDBFactory.h>
+#include <InfluxDB/InfluxDB.h>
 #include <memory>
 #include <string>
 #include <vector>

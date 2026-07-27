@@ -66,12 +66,12 @@ size_t TimeSeriesBuffer::drain(std::vector<nlohmann::json>& output, size_t max_i
     return to_drain;
 }
 
-bool TimeSeriesBuffer::empty() const {
+bool TimeSeriesBuffer::empty() {
     std::unique_lock<std::mutex> lock(mutex_);
     return count_ == 0;
 }
 
-size_t TimeSeriesBuffer::size() const {
+size_t TimeSeriesBuffer::size() {
     std::unique_lock<std::mutex> lock(mutex_);
     return count_;
 }

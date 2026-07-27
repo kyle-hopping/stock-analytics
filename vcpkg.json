@@ -8,6 +8,7 @@
     "curl",
     "boost-asio",
     "gtest",
-    "influxdb-cxx"
+    "influxdb-cxx",
+    "uwebsockets"
   ]
 }
