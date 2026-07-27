@@ -11,8 +11,6 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
 
-set(VCPKG_TARGET_TRIPLET "x64-windows" CACHE STRING "vcpkg triplet")
-
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Compiler:   ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
