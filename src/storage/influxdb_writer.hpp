@@ -1,5 +1,6 @@
 #pragma once
 #include <InfluxDB/InfluxDBFactory.h>
+#include <InfluxDB/InfluxDBBuilder.h>
 #include <InfluxDB/InfluxDB.h>
 #include <InfluxDB/Point.h>
 #include <nlohmann/json.hpp>

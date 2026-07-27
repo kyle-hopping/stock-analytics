@@ -1,12 +1,13 @@
+#include <InfluxDB/InfluxDBBuilder.h>
 #include "query_handler.hpp"
 #include <sstream>
 #include <stdexcept>
 
 QueryHandler::QueryHandler() {
     // Load connection parameters from environment
-    const char* url_env    = std::getenv("INFLUXDB_URL");
-    const char* token_env  = std::getenv("INFLUXDB_TOKEN");
-    const char* org_env    = std::getenv("INFLUXDB_ORG");
+    const char* url_env = std::getenv("INFLUXDB_URL");
+    const char* token_env = std::getenv("INFLUXDB_TOKEN");
+    const char* org_env = std::getenv("INFLUXDB_ORG");
     const char* bucket_env = std::getenv("INFLUXDB_BUCKET");
 
     if (!url_env || !token_env || !org_env || !bucket_env) {
@@ -18,16 +19,16 @@ QueryHandler::QueryHandler() {
     }
 
     bucket_ = bucket_env;
-    org_    = org_env;
-
-    const std::string connection_url =
-        std::string(url_env) +
-        "?org="    + org_    +
-        "&bucket=" + bucket_ +
-        "&token="  + token_env;
+    org_ = org_env;
 
     try {
-        db_ = influxdb::InfluxDBFactory::Get(connection_url);
+        // influxdb-cxx 0.8.1 uses InfluxDB v1.x compatibility API format
+        // Token is passed via setAuthToken(), db= is the bucket name
+        db_ = influxdb::InfluxDBBuilder::http(
+                std::string(url_env) + "?db=" + bucket_)
+            .setAuthToken(token_env)
+            .connect();
+
         spdlog::info("QueryHandler: connected to InfluxDB bucket '{}'", bucket_);
     } catch (const std::exception& e) {
         throw std::runtime_error(

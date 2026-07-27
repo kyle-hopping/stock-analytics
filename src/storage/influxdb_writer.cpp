@@ -21,10 +21,8 @@ InfluxDBWriter::InfluxDBWriter() {
     connect(url_env, token_env, org_env, bucket_env);
 }
 
-InfluxDBWriter::InfluxDBWriter(const std::string& url,
-                               const std::string& token,
-                               const std::string& org,
-                               const std::string& bucket) {
+InfluxDBWriter::InfluxDBWriter(const std::string& url, const std::string& token,
+                               const std::string& org, const std::string& bucket) {
     connect(url, token, org, bucket);
 }
 
@@ -38,26 +36,19 @@ InfluxDBWriter::~InfluxDBWriter() {
     }
 }
 
-void InfluxDBWriter::connect(const std::string& url,
-                              const std::string& token,
-                              const std::string& org,
-                              const std::string& bucket) {
+void InfluxDBWriter::connect(const std::string& url, const std::string& token,
+                             const std::string& org, const std::string& bucket) {
     bucket_ = bucket;
 
-    // Build the InfluxDB connection URL in the format expected by influxdb-cxx:
-    // http://host:port?org=<org>&bucket=<bucket>&token=<token>
-    const std::string connection_url =
-        url + "?org=" + org +
-        "&bucket=" + bucket +
-        "&token=" + token;
-
     try {
-        db_ = influxdb::InfluxDBFactory::Get(connection_url);
+        // influxdb-cxx 0.8.1 uses InfluxDB v1.x compatibility API format.
+        // Token is passed as username in the URL, db= is the bucket name.
+        // Format: http://token@host:port?db=bucket
+        db_ = influxdb::InfluxDBBuilder::http(url + "?db=" + bucket)
+            .setAuthToken(token)
+            .connect();
 
-        // Enable internal batching — influxdb-cxx will accumulate points
-        // and flush them in bulk for better write throughput
         db_->batchOf(BATCH_SIZE);
-
         spdlog::info("InfluxDBWriter: connected to {} bucket '{}'", url, bucket);
     } catch (const std::exception& e) {
         throw std::runtime_error(
@@ -150,7 +141,7 @@ void InfluxDBWriter::flush() {
 
 influxdb::Point InfluxDBWriter::build_point(const nlohmann::json& tick) {
     const std::string ticker = tick["ticker"].get<std::string>();
-    const double      price  = tick["price"].get<double>();
+    const double price = tick["price"].get<double>();
     const std::string source = tick.value("source", "unknown");
 
     // Build the InfluxDB point
