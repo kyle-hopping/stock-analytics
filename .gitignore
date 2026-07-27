@@ -70,3 +70,6 @@ Testing/
 
 # environment variables
 .env
+
+# machine specified override
+CMakeUserPresets.json
