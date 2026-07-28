@@ -153,7 +153,19 @@ if(BUILD_TESTS)
     tests/test_influxdb_writer.cpp
   )
 
-  add_executable(stock_analytics_tests ${TEST_SOURCES})
+  set(TEST_IMPL_SOURCES
+    src/processing/thread_pool.cpp
+    src/processing/parallel_pipeline.cpp
+    src/processing/indicators/moving_average.cpp
+    src/processing/indicators/rsi_calculator.cpp
+    src/processing/indicators/vwap_calculator.cpp
+    src/storage/timeseries_buffer.cpp
+  )
+
+  add_executable(stock_analytics_tests
+    ${TEST_SOURCES}
+    ${TEST_IMPL_SOURCES}
+  )
 
   target_include_directories(stock_analytics_tests PRIVATE
     ${CMAKE_SOURCE_DIR}/src
